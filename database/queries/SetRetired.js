@@ -5,5 +5,12 @@ const Artist = require('../models/artist');
  * @param {array} _ids - An array of the _id's of of artists to update
  * @return {promise} A promise that resolves after the update
  */
+
+//multi : true for multi update
 module.exports = (_ids) => {
+    return Artist.update(
+        {_id: {$in: _ids}},
+        {retired: true},
+        {multi: true}
+    )
 };

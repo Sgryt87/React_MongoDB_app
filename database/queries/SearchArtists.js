@@ -20,7 +20,7 @@ module.exports = (criteria, sortProperty, offset = 0, limit = 20) => {
         .skip(offset)
         .limit(limit)
 
-    return Promise.all([query, Artist.count()])
+    return Promise.all([query, Artist.find(buildQuery(criteria)).count()])
         .then(results => {
             return {
                 all: results[0],
@@ -35,7 +35,7 @@ const buildQuery = criteria => {
     const query = {}
 
     if (criteria.name) {
-        query.$text = {$search: criteria.name}
+        query.name = {$regex: criteria.name, $options: 'i'}
     }
 
     if (criteria.age) {
@@ -52,6 +52,6 @@ const buildQuery = criteria => {
         }
     }
     //db.artists.createIndex({name: "text"}) => indexed
-    //raw query =>  db.getCollection('artists').find({age: {$gte: 0, $lte:500}, yearsActive: {$gte: 0, $lte:5}})
+    // raw query =>  db.getCollection('artists').find({name : {$regex: 'Ki', $options: 'i'},age: {$gte: 0, $lte:500}, yearsActive: {$gte: 0, $lte:500}})
     return query
 }
